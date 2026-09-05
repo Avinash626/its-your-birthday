@@ -44,6 +44,12 @@
 
 <style id="v5-final-styles">
 .open-btn:disabled{opacity:.42;cursor:not-allowed;transform:none!important;filter:saturate(.5)}
+.intro-count{margin:8px auto 26px;max-width:420px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);border-radius:22px;padding:14px 16px;backdrop-filter:blur(10px)}
+.intro-count-label{font:11px Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;opacity:.78;margin-bottom:10px}
+.intro-count-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.intro-time{padding:9px 4px;border-radius:14px;background:rgba(255,255,255,.09)}
+.intro-time b{display:block;font:700 clamp(18px,3.4vw,26px) Arial,sans-serif}
+.intro-time span{font:9px Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase;opacity:.68}
 .cinema-layer{position:fixed;inset:0;z-index:9990;background:#09070a;color:#fff;display:flex;align-items:center;justify-content:center;text-align:center;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 1s ease,visibility 1s ease}.cinema-layer.show{opacity:1;visibility:visible;pointer-events:auto}.cinema-line{font:400 clamp(30px,6vw,64px)/1.1 Georgia,serif;padding:30px;opacity:0;transform:translateY(18px);transition:opacity 1.1s ease,transform 1.1s ease}.cinema-layer.show .cinema-line{opacity:1;transform:none}.montage{background:#050405}.montage-photo{position:absolute;inset:0;background:center/contain no-repeat;opacity:0;transform:scale(1.035);transition:opacity 1.1s ease,transform 3s ease}.montage-photo.show{opacity:1;transform:scale(1)}.montage-text{position:relative;z-index:2;color:#fff;font:400 clamp(24px,4.5vw,46px)/1.3 Georgia,serif;padding:22px;opacity:0;transform:translateY(14px);transition:opacity 1s ease,transform 1s ease;text-shadow:0 4px 20px rgba(0,0,0,.6)}.montage-text.show{opacity:1;transform:none}.blackout{background:#000}.blackout-text{width:min(900px,88vw);font:400 clamp(27px,5vw,58px)/1.25 Georgia,serif}.blackout-text span{display:block;opacity:0;transform:translateY(16px);transition:opacity 1s ease,transform 1s ease;margin:12px 0}.blackout-text span.show{opacity:1;transform:none}.celebration{background:radial-gradient(circle,rgba(130,55,92,.3),rgba(0,0,0,.92))}.celebration-box{font:400 clamp(28px,5vw,58px)/1.15 Georgia,serif;padding:30px}
 .v5-heart{position:fixed;bottom:-40px;z-index:10001;pointer-events:none;font-size:20px;animation:v5float 4.5s linear forwards}@keyframes v5float{to{transform:translateY(-110vh) rotate(30deg);opacity:0}}
 @media(max-width:600px){.v5-heart{font-size:16px}}
@@ -57,6 +63,15 @@
   <div class="intro-content">
     <div class="intro-mini">A little surprise from Avu</div>
     <h1>Hey Anshu…<br><em>I made something for you. ♥</em></h1>
+    <div class="intro-count" id="introCount" aria-live="polite">
+      <div class="intro-count-label" id="introCountLabel">Unlocks in</div>
+      <div class="intro-count-grid">
+        <div class="intro-time"><b id="introD">--</b><span>Days</span></div>
+        <div class="intro-time"><b id="introH">--</b><span>Hours</span></div>
+        <div class="intro-time"><b id="introM">--</b><span>Min</span></div>
+        <div class="intro-time"><b id="introS">--</b><span>Sec</span></div>
+      </div>
+    </div>
     <button class="open-btn" id="openSurprise" type="button" disabled aria-disabled="true">✨ Open Your Surprise</button>
   </div>
 </div>
@@ -166,9 +181,11 @@ let entered=false, songStarted=false, endingPlayed=false;
 // Countdown starts immediately when the URL is opened.
 function tick(){
   let x=target-Date.now();
+  const introD=$('#introD'), introH=$('#introH'), introM=$('#introM'), introS=$('#introS'), introLabel=$('#introCountLabel');
   if(x<=0){
     $('#countLabel').textContent='Today is your day. Happy Birthday, Anshu! ♥';
     ['#d','#h','#m','#s'].forEach((id,i)=>$(id).textContent=i===0?'🎂':'');
+    if(introD){introLabel.textContent='It\'s your day! ♥'; introD.textContent='🎂'; introH.textContent=''; introM.textContent=''; introS.textContent='';}
     openBtn.disabled=false; openBtn.setAttribute('aria-disabled','false');
     openBtn.title='';
     return;
@@ -181,6 +198,12 @@ function tick(){
   $('#h').textContent=String(h).padStart(2,'0');
   $('#m').textContent=String(m).padStart(2,'0');
   $('#s').textContent=String(s).padStart(2,'0');
+  if(introD){
+    introD.textContent=String(d).padStart(2,'0');
+    introH.textContent=String(h).padStart(2,'0');
+    introM.textContent=String(m).padStart(2,'0');
+    introS.textContent=String(s).padStart(2,'0');
+  }
 }
 tick(); setInterval(tick,1000);
 
